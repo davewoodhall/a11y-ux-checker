@@ -81,7 +81,7 @@ Les options jQuery (toutes activées par défaut sauf mention) incluent notammen
 
 ### Test modale × Échap (`admin-bar-audit.js`)
 
-Après les audits synchrones, recherche des **modales visibles** (`role="dialog"`, `role="alertdialog"`, `aria-modal="true"`, classes fréquentes `.modal.show` / `.is-active` / `.is-open`). Pour chacune : focus sur un contrôle interne, envoi d’événements clavier **Escape** synthétiques, puis contrôle de la visibilité après un court délai. Les messages associés sont en **français** dans la console. **Attention** : les modales ouvertes peuvent se fermer.
+Après les audits synchrones, recherche des **modales visibles** (`role="dialog"`, `role="alertdialog"`, `aria-modal="true"`, classes fréquentes `.modal.show` / `.is-active` / `.is-open`). Pour chacune : focus sur un contrôle interne, envoi d’événements clavier **Escape** synthétiques, puis contrôle de la visibilité après un court délai. Les messages associés sont **localisés** selon la langue du site (par défaut `en_CA`, avec support `fr_CA`). **Attention** : les modales ouvertes peuvent se fermer.
 
 ### Audit de contraste (`a11yContrastReport`)
 
@@ -116,7 +116,7 @@ Après les audits synchrones, recherche des **modales visibles** (`role="dialog"
 
 ## Sortie des audits
 
-Par défaut, chaque module journalise dans la console avec `console.group`. Les messages des plugins jQuery sont surtout en **anglais** ; le groupe **« MODAL × ÉCHAP »** est en **français**.
+Par défaut, chaque module journalise dans la console avec `console.group`. Les libellés et titres de groupes sont **localisés** selon la langue du site (par défaut `en_CA`, avec support `fr_CA`). Le groupe console de la modale utilise le titre **« Modal × Escape (keyboard test) »** en anglais.
 
 ## Développement
 

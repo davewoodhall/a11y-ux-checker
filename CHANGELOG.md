@@ -1,5 +1,10 @@
 # Changelog
 
+<h4>1.1.1 — 2026-04-21</h4>
+<ul>
+    <li>Corrected <code>README.md<code>, MODAL x ÉCHAP is no longer de default in French.</li>
+</ul>
+
 <h4>1.1.0 — 2026-04-20</h4>
 <ul>
     <li>Internationalization: text domain <code>a11y_ux_checker</code>, source strings in Canadian English (<code>en_CA</code>), Canadian French language pack (<code>languages/a11y_ux_checker-fr_CA.mo</code>).</li>
