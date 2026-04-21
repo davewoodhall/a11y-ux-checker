@@ -3,7 +3,7 @@
 /**
  * Plugin Name: A11Y & UX Checker
  * Description: Runs accessibility and user experience checks for your site.
- * Version: 1.1.0
+ * Version: 1.1.1
  * Author: ADN Communication
  * Author URI: https://adn.communication
  * Text Domain: a11y_ux_checker
