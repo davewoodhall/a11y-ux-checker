@@ -76,7 +76,7 @@ if ( !class_exists('Ui', false) ):
 					$viewDetailsLink = sprintf('<a href="%s" class="thickbox open-plugin-details-modal" aria-label="%s" data-title="%s">%s</a>',
 						esc_url(network_admin_url('plugin-install.php?tab=plugin-information&plugin=' . urlencode($this->updateChecker->slug) .
 							'&TB_iframe=true&width=600&height=550')),
-						esc_attr(sprintf(__('Plus d\'informations sur %s'), $pluginData['Name'])),
+						esc_attr(sprintf(__('More information about %s'), $pluginData['Name'])),
 						esc_attr($pluginData['Name']),
 						$linkText
 					);
@@ -127,7 +127,7 @@ if ( !class_exists('Ui', false) ):
 
 				$linkText = apply_filters(
 					$this->updateChecker->getUniqueName('manual_check_link'),
-					__('Vérifier les mises à jour', 'plugin-update-checker')
+					__('Check for updates', 'plugin-update-checker')
 				);
 				if ( !empty($linkText) ) {
 					/** @noinspection HtmlUnknownTarget */
@@ -212,17 +212,17 @@ if ( !class_exists('Ui', false) ):
 				$details = '';
 
 				if ( $status == 'no_update' ) {
-					$message = sprintf(_x('Le plugin %s est à jour.', 'the plugin title', 'plugin-update-checker'), $title);
+					$message = sprintf(_x('The %s plugin is up to date.', 'the plugin title', 'plugin-update-checker'), $title);
 				} else if ( $status == 'update_available' ) {
-					$message = sprintf(_x('Une nouvelle version du plugin %s est disponible.', 'the plugin title', 'plugin-update-checker'), $title);
+					$message = sprintf(_x('A new version of the %s plugin is available.', 'the plugin title', 'plugin-update-checker'), $title);
 				} else if ( $status === 'error' ) {
-					$message = sprintf(_x('Ne peut pas déterminer si des mises à jour sont disponibles pour %s.', 'the plugin title', 'plugin-update-checker'), $title);
+					$message = sprintf(_x('Could not determine if updates are available for %s.', 'the plugin title', 'plugin-update-checker'), $title);
 					$noticeClass = 'error notice-error';
 
 					$details = $this->formatManualCheckErrors(get_site_transient($this->manualCheckErrorTransient));
 					delete_site_transient($this->manualCheckErrorTransient);
 				} else {
-					$message = sprintf(__('Statut de vérificateur de mise à jour inconnu "%s"', 'plugin-update-checker'), $status);
+					$message = sprintf(__('Unknown update checker status \"%s\"', 'plugin-update-checker'), $status);
 					$noticeClass = 'error notice-error';
 				}
 

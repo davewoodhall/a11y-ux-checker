@@ -1,124 +1,125 @@
 # A11Y & UX Checker
 
-Extension WordPress (**dossier du plugin** : `adn-a11y-ux-checker` ; fichier principal : `adn-a11y-checker.php`) qui propose des **audits d’accessibilité et d’expérience utilisateur** côté navigateur. Les contrôles s’exécutent en JavaScript (jQuery) sur le DOM de la page courante ; les résultats sont surtout visibles dans la **console développeur** du navigateur.
+WordPress plugin (**plugin folder**: `adn-a11y-ux-checker`; main file: `adn-a11y-checker.php`) that runs **accessibility and user experience audits** in the browser. Checks are implemented in JavaScript (jQuery) and run against the current page DOM; results are primarily visible in the browser **developer console**.
 
-## Prérequis
+## Requirements
 
-- WordPress avec barre d’administration visible.
-- Utilisateur **administrateur** du site (`manage_options`, ou filtre `a11y_ux_checker_user_can_run_audit`).
-- jQuery (fourni par WordPress).
+- WordPress with the admin bar visible.
+- A **site administrator** account (`manage_options`, or filter `a11y_ux_checker_user_can_run_audit`).
+- jQuery (provided by WordPress).
 
-## Utilisation
+## Usage
 
-1. Connectez-vous avec un compte **administrateur** du site.
-2. Sur le front-office ou le back-office, ouvrez la barre d’administration WordPress.
-3. Cliquez sur **« Analyse a11y & UX »**.
-4. Ouvrez la console du navigateur (**F12** → onglet *Console*) pour lire les rapports groupés.
+1. Log in with a **site administrator** account.
+2. On the front-end or wp-admin, make sure the WordPress admin bar is visible.
+3. Click **“A11y & UX audit”** in the admin bar.
+4. Open your browser console (**F12** → *Console*) to review the grouped reports.
 
-Pour tester la **fermeture d’une modale au clavier** : ouvrez d’abord une modale sur la page, puis lancez l’analyse. Un groupe console dédié envoie une touche **Échap** synthétique (les modales ouvertes peuvent se fermer).
+To test **closing modals via keyboard**: open a modal on the page, then run the audit. A dedicated console group sends a synthetic **Escape** key event (open modals may close).
 
-## Architecture du code
+## Code architecture
 
-| Élément | Rôle |
+| Component | Purpose |
 |--------|------|
-| `adn-a11y-checker.php` | Point d’entrée : constantes, autoloader, `Plugin` et `Plugin_Updater`. |
-| `autoload.php` | Autoload minimal pour l’espace de noms `AdnA11yChecker`. |
-| `includes/class-plugin.php` | Singleton : textdomain `a11y_ux_checker`, accès réservé aux administrateurs, barre d’admin, enqueue des scripts. |
-| `includes/class-plugin-updater.php` | Mises à jour via **Plugin Update Checker** (même bibliothèque que `wp-core`), dépôt **GitHub**. |
-| `includes/plugin-update-checker.php` | Bootstrap PUC (`ADN\PluginUpdateChecker\v5`). |
-| `includes/plugin-update-checker/` | Sources PUC (v5p0). |
-| `assets/js/admin-bar-audit.js` | Au clic : enchaîne les quatre audits sur `body`, puis un **test asynchrone Échap** sur les modales visibles. |
-| `assets/js/structure-audit.js` | Plugin jQuery `a11yStructureAudit`. |
-| `assets/js/contrast.js` | Plugin jQuery `a11yContrastReport`. |
-| `assets/js/forms.js` | Plugin jQuery `a11yFormsReport`. |
-| `assets/js/ux-audit.js` | Plugin jQuery `uxAudit`. |
+| `adn-a11y-checker.php` | Entry point: constants, autoloader, `Plugin` and `Plugin_Updater`. |
+| `autoload.php` | Minimal autoloader for the `AdnA11yChecker` namespace. |
+| `includes/class-plugin.php` | Singleton: text domain `a11y_ux_checker`, administrator-only access, admin bar node, script enqueue. |
+| `includes/class-plugin-updater.php` | Updates via **Plugin Update Checker** (same library as `wp-core`), **GitHub** repository. |
+| `includes/plugin-update-checker.php` | PUC bootstrap (`ADN\PluginUpdateChecker\v5`). |
+| `includes/plugin-update-checker/` | PUC sources (v5p0). |
+| `assets/js/i18n-runtime.js` | Small helper for localized strings formatting (`a11yUxSprintf`). |
+| `assets/js/admin-bar-audit.js` | On click: runs the four audits on `body`, then an async **Escape test** on visible modals. |
+| `assets/js/structure-audit.js` | jQuery plugin `a11yStructureAudit`. |
+| `assets/js/contrast.js` | jQuery plugin `a11yContrastReport`. |
+| `assets/js/forms.js` | jQuery plugin `a11yFormsReport`. |
+| `assets/js/ux-audit.js` | jQuery plugin `uxAudit`. |
 
-## Liste des fonctionnalités
+## Features
 
-### Intégration WordPress (PHP)
+### WordPress integration (PHP)
 
-- Lien **« Analyse a11y & UX »** dans la barre d’administration (`#wpadminbar`, id du nœud : `adn-a11y-audit`).
-- Chargement conditionnel des scripts pour les **administrateurs** (front et admin).
-- Textdomain **`a11y_ux_checker`** pour les chaînes traduisibles.
+- **“A11y & UX audit”** link in the admin bar (`#wpadminbar`, node id: `adn-a11y-audit`).
+- Scripts are only loaded for **administrators** (front-end and wp-admin).
+- Text domain **`a11y_ux_checker`** for translations.
 
-### Mises à jour depuis GitHub (comme wp-core)
+### Updates from GitHub (like wp-core)
 
-Le plugin embarque **Plugin Update Checker** (PUC, espace de noms `ADN\PluginUpdateChecker`, copie alignée sur `wp-core`). Tant qu’une URL de dépôt est définie, WordPress peut afficher les mises à jour lorsque vous publiez des **releases** (ou tags) sur GitHub.
+The plugin embeds **Plugin Update Checker** (PUC, `ADN\PluginUpdateChecker` namespace, aligned with `wp-core`). As long as a repository URL is configured, WordPress can show updates when you publish GitHub **releases** (or tags).
 
-1. **En-tête du plugin** : champ `GitHub URI` pointant vers le dépôt, par ex. `https://github.com/ORGANISATION/adn-a11y-ux-checker` (déjà présent comme modèle dans `adn-a11y-checker.php`).
-2. **Surcharge optionnelle** dans `wp-config.php` : `define( 'ADN_A11Y_CHECKER_GITHUB_REPO', 'https://github.com/ORG/REPO' );`
-3. **Désactiver** les mises à jour GitHub : `define( 'ADN_A11Y_CHECKER_GITHUB_REPO', '' );` (chaîne vide).
+1. **Plugin header**: the `GitHub URI` field points at the repository, e.g. `https://github.com/ORG/adn-a11y-ux-checker` (already present in `adn-a11y-checker.php`).
+2. **Optional override** in `wp-config.php`: `define( 'ADN_A11Y_CHECKER_GITHUB_REPO', 'https://github.com/ORG/REPO' );`
+3. **Disable** GitHub updates: `define( 'ADN_A11Y_CHECKER_GITHUB_REPO', '' );` (empty string).
 
-Pour un **dépôt privé**, configurez l’authentification GitHub via le hook `adn_a11y_checker_update_checker_ready` et l’API PUC (`setAuthentication`), plutôt qu’une constante dans le dépôt du plugin.
+For a **private repository**, configure GitHub authentication via the `adn_a11y_checker_update_checker_ready` hook and the PUC API (`setAuthentication`), rather than storing secrets in the plugin repository.
 
-Le slug utilisé côté WordPress est le **nom du dossier** du plugin (`adn-a11y-ux-checker`). Les ZIP de release GitHub doivent décompresser vers un répertoire compatible (voir la doc PUC / structure des releases).
+The WordPress plugin slug is the **plugin folder name** (`adn-a11y-ux-checker`). GitHub release ZIPs must unpack into a compatible directory name (see PUC docs / release structure).
 
-**Hook** : `adn_a11y_checker_update_checker_ready` reçoit l’instance PUC pour appels avancés (`setBranch`, `setAuthentication`, etc.).
-**Filtres** : `adn_a11y_checker_github_repository_url` (URL du dépôt) ; `a11y_ux_checker_user_can_run_audit` (booléen — qui peut voir le lien et charger les scripts d’audit).
+**Hook**: `adn_a11y_checker_update_checker_ready` receives the PUC instance for advanced usage (`setBranch`, `setAuthentication`, etc.).
+**Filters**: `adn_a11y_checker_github_repository_url` (repository URL); `a11y_ux_checker_user_can_run_audit` (boolean — who can see the admin bar link and load audit scripts).
 
-### Audit de structure (`a11yStructureAudit`)
+### Structure audit (`a11yStructureAudit`)
 
-- **Document** : attribut `lang` sur `<html>`, présence d’un `<title>` non vide, `meta name="viewport"` (signal informatif).
-- **Repères** : un seul `<main>` ; avertissements si `<nav>`, `<header>` ou `<footer>` manquants ; en-têtes / pieds multiples ; nom accessible des `<nav>`.
-- **Titres** : absence de `<h1>`, plusieurs `<h1>`, titres vides, sauts de niveau (ex. H2 → H4).
-- **Sections** : section sans nom accessible, section vide.
-- **Listes** : listes sans `<li>`.
-- **ARIA** : `aria-labelledby`, `aria-describedby`, `aria-controls` pointant vers des IDs absents ; `aria-label` vide ou redondant ; rôles vides ou redondants avec le HTML natif.
-- **Interactifs** : gestionnaires inline (`onclick`, etc.) ; éléments non sémantiques cliquables.
-- **Liens** : liens multiples vers la même URL (hors navigation / ancres).
-- **Contenu** : texte direct dans des blocs ; gros liens / cartes cliquables (heuristiques).
-- **IDs** : IDs dupliqués.
-- **Focus** : `tabindex` positif ; éléments focalisables dans un conteneur `aria-hidden="true"`.
-- **Noms accessibles** : contrôles natifs sans nom accessible visible.
-- **Images** : `<img>` sans attribut `alt`.
-- **SVG** : graphique potentiellement informatif sans nom accessible (`title`, `aria-label`, `aria-labelledby`, ou masqué avec `aria-hidden` / `role="presentation"`).
-- **Tableaux** : absence de `<th>` ; grands tableaux sans `<caption>` (info).
-- **Liens d’évitement** : ancre type « skip » — cible du fragment absente ou présente (info / avertissement).
-- **Dialogues** : `role="dialog"` / `alertdialog` sans nom accessible ; absence de `aria-modal` (info).
-- **Clavier** : sous-arbre `[inert]` contenant encore des contrôles visibles focalisables (heuristique).
+- **Document**: `<html lang>` presence, non-empty `<title>`, `meta name="viewport"` (informational signal).
+- **Landmarks**: exactly one `<main>`; warnings for missing `<nav>`, `<header>`, `<footer>`; multiple headers/footers; accessible name for `<nav>`.
+- **Headings**: missing `<h1>`, multiple `<h1>`, empty headings, skipped levels (e.g. H2 → H4).
+- **Sections**: section without an accessible name, empty section.
+- **Lists**: lists without `<li>`.
+- **ARIA**: `aria-labelledby`, `aria-describedby`, `aria-controls` referencing missing IDs; empty/redundant `aria-label`; empty/redundant roles.
+- **Interactive**: inline handlers (`onclick`, etc.); non-semantic clickable elements.
+- **Links**: multiple links to the same URL (excluding nav/anchors).
+- **Content patterns**: direct text in generic blocks; linked containers/cards (heuristics).
+- **IDs**: duplicate IDs.
+- **Focus**: positive `tabindex`; focusable elements inside `aria-hidden="true"` containers.
+- **Accessible names**: native controls missing an accessible name.
+- **Images**: `<img>` missing `alt`.
+- **SVG**: potentially informative SVG without an accessible name (`title`, `aria-label`, `aria-labelledby`, or hidden with `aria-hidden` / `role="presentation"`).
+- **Tables**: missing `<th>`; large tables without `<caption>` (info).
+- **Skip links**: “skip” style anchors pointing to missing or present targets (info/warning).
+- **Dialogs**: `role="dialog"` / `alertdialog` missing accessible name; missing `aria-modal` (info).
+- **Keyboard**: `[inert]` subtree still containing visible focusable controls (heuristic).
 
-Les options jQuery (toutes activées par défaut sauf mention) incluent notamment : `checkDocumentLang`, `checkDocumentTitle`, `checkMetaViewport`, `checkImages`, `checkSvg`, `checkTables`, `checkSkipLinks`, `checkDialogSemantics`, etc.
+Available jQuery options (all enabled by default unless specified) include: `checkDocumentLang`, `checkDocumentTitle`, `checkMetaViewport`, `checkImages`, `checkSvg`, `checkTables`, `checkSkipLinks`, `checkDialogSemantics`, etc.
 
-### Test modale × Échap (`admin-bar-audit.js`)
+### Modal × Escape test (`admin-bar-audit.js`)
 
-Après les audits synchrones, recherche des **modales visibles** (`role="dialog"`, `role="alertdialog"`, `aria-modal="true"`, classes fréquentes `.modal.show` / `.is-active` / `.is-open`). Pour chacune : focus sur un contrôle interne, envoi d’événements clavier **Escape** synthétiques, puis contrôle de la visibilité après un court délai. Les messages associés sont **localisés** selon la langue du site (par défaut `en_CA`, avec support `fr_CA`). **Attention** : les modales ouvertes peuvent se fermer.
+After the synchronous audits, it looks for **visible modals** (`role=\"dialog\"`, `role=\"alertdialog\"`, `aria-modal=\"true\"`, common classes `.modal.show` / `.is-active` / `.is-open`). For each candidate it focuses an internal control, dispatches synthetic **Escape** keyboard events, and checks visibility after a short delay. Messages are **localized** based on the site language (default `en_CA`, with `fr_CA` support). **Warning**: open modals may close.
 
-### Audit de contraste (`a11yContrastReport`)
+### Contrast audit (`a11yContrastReport`)
 
-- Calcul du **rapport de contraste** texte / fond (seuils configurables : **A**, **AA**, **AAA**).
-- Prise en compte de la **taille** et du **gras** du texte (grand texte vs texte normal).
-- Signalement de cas limites : transparence, icônes seules, risques de visibilité au focus, etc.
-- Option d’**ignorer** certains sélecteurs (`ignore`, `ignoreDescendants`).
+- Computes **contrast ratio** between text and background (configurable levels: **A**, **AA**, **AAA**).
+- Takes **font size** and **font weight** into account (large vs normal text).
+- Flags edge cases: transparency, icon-only controls, focus visibility risks, etc.
+- Supports ignoring selectors (`ignore`, `ignoreDescendants`).
 
-### Audit de formulaires (`a11yFormsReport`)
+### Forms audit (`a11yFormsReport`)
 
-- **Suivi d’exécution** (optionnel) : focus, soumission, observer sur attributs pour certains signaux.
-- **Formulaire** : surcharge de champs `required`, ambiguïté des boutons d’envoi, formulaires multi-étapes peu clairs, état de chargement.
-- **Champs** : `id` / `name` manquants, absence de `<label>`, label masqué, placeholder utilisé comme seul libellé, cohérence type / nom, `autocomplete`, indicateurs `required` / `aria-*`, `aria-describedby` cassé, champs invisibles mais encore focalisables.
-- **Groupes** : radios / cases sans `fieldset` / `legend`.
-- **Navigation clavier** : `tabindex` &gt; 0.
-- **Aide** : blocs `.help`, `.error`, etc. sans `id` pour liaison.
-- **Erreurs dynamiques** : champs en `aria-invalid="true"` sans zone `[aria-live]` ni `[role="alert"]` dans le formulaire (heuristique).
+- **Runtime tracking** (optional): focus, submit, attribute mutation observer for some signals.
+- **Form-level**: too many `required` fields, submit button ambiguity, unclear multi-step flows, missing loading state.
+- **Fields**: missing `id` / `name`, missing `<label>`, hidden label, placeholder used as the only label, type/name mismatch, missing `autocomplete`, required/ARIA indicator mismatches, broken `aria-describedby`, invisible-but-focusable fields.
+- **Groups**: radios/checkboxes without `fieldset` / `legend`.
+- **Keyboard navigation**: `tabindex` > 0.
+- **Help text**: `.help`, `.error`, etc. without an `id` for linking.
+- **Dynamic errors**: `aria-invalid="true"` without an `[aria-live]` region or `[role="alert"]` within the form (heuristic).
 
-### Audit UX (`uxAudit`)
+### UX audit (`uxAudit`)
 
-- **Clics** : éléments rendus cliquables sans sémantique ni rôle approprié.
-- **Imbrication** : interactifs imbriqués (risque de conflit de clic).
-- **Navigation** : densité des entrées de premier niveau, profondeur du menu.
-- **CTA** : densité par section, surcharge d’éléments interactifs, répétition de libellés de CTA.
-- **Cibles** : taille minimale des zones cliquables (réglable).
-- **UI** : éléments stylés comme boutons sans être de vrais contrôles.
-- **Densité** : sections / articles avec forte densité de liens (signal « pattern »).
-- **Viewport** : trop d’éléments interactifs dans la zone visible initiale.
-- **Hiérarchie** : sections avec beaucoup de CTA mais sans titres.
-- **Liens nouvel onglet** : `target="_blank"` sans `rel` contenant `noopener`.
-- **Libellés de liens** : textes génériques ambigus (FR/EN, motif « pattern »).
+- **Clickability**: clickable elements without proper semantics or roles.
+- **Nesting**: nested interactives (click conflict risk).
+- **Navigation**: top-level density and depth.
+- **CTAs**: density per section, interactive overload, repeated CTA labels.
+- **Targets**: minimum click target size (configurable).
+- **UI patterns**: elements styled as buttons without being real controls.
+- **Density**: sections/articles with high link density (pattern signal).
+- **Viewport**: too many interactive elements in the initial viewport.
+- **Hierarchy**: CTA-heavy sections without headings.
+- **New tab links**: `target="_blank"` missing `rel` with `noopener`.
+- **Link text**: ambiguous/generic link labels (EN/FR, pattern signal).
 
-## Sortie des audits
+## Output
 
-Par défaut, chaque module journalise dans la console avec `console.group`. Les libellés et titres de groupes sont **localisés** selon la langue du site (par défaut `en_CA`, avec support `fr_CA`). Le groupe console de la modale utilise le titre **« Modal × Escape (keyboard test) »** en anglais.
+Each module logs to the console using `console.group`. Labels and group titles are **localized** based on the site language (default `en_CA`, with `fr_CA` support). The modal group uses the title **“Modal × Escape (keyboard test)”** in English.
 
-## Développement
+## Development
 
-- **Version** : voir `ADN_A11Y_CHECKER_VERSION` dans `adn-a11y-checker.php`.
-- Dossier des traductions attendu : `languages/` (relatif au plugin).
+- **Version**: see `ADN_A11Y_CHECKER_VERSION` in `adn-a11y-checker.php`.
+- Translations directory: `languages/` (relative to the plugin).

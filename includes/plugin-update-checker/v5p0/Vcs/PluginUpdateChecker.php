@@ -95,7 +95,7 @@ if ( !class_exists(PluginUpdateChecker::class, false) ):
 			if ( empty($info->sections['changelog']) ) {
 				$info->sections['changelog'] = $api->getRemoteChangelog($ref, $this->package->getAbsoluteDirectoryPath());
 				if ( empty($info->sections['changelog']) ) {
-					$info->sections['changelog'] = __('Il n\'y a pas de changelog disponible.', 'plugin-update-checker');
+					$info->sections['changelog'] = __('No changelog is available.', 'plugin-update-checker');
 				}
 			}
 

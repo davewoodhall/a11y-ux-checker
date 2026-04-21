@@ -2,7 +2,7 @@
 
 <h4>1.1.1 — 2026-04-21</h4>
 <ul>
-    <li>Corrected <code>README.md<code>, MODAL x ÉCHAP is no longer de default in French.</li>
+    <li>Translated all strings to Canadian English by default.</li>
 </ul>
 
 <h4>1.1.0 — 2026-04-20</h4>
