@@ -5,12 +5,12 @@ Extension WordPress (**dossier du plugin** : `adn-a11y-ux-checker` ; fichier pri
 ## Prérequis
 
 - WordPress avec barre d’administration visible.
-- Utilisateur **connecté** (les scripts ne sont chargés que dans ce cas).
+- Utilisateur **administrateur** du site (`manage_options`, ou filtre `a11y_ux_checker_user_can_run_audit`).
 - jQuery (fourni par WordPress).
 
 ## Utilisation
 
-1. Connectez-vous au site.
+1. Connectez-vous avec un compte **administrateur** du site.
 2. Sur le front-office ou le back-office, ouvrez la barre d’administration WordPress.
 3. Cliquez sur **« Analyse a11y & UX »**.
 4. Ouvrez la console du navigateur (**F12** → onglet *Console*) pour lire les rapports groupés.
@@ -23,7 +23,7 @@ Pour tester la **fermeture d’une modale au clavier** : ouvrez d’abord une mo
 |--------|------|
 | `adn-a11y-checker.php` | Point d’entrée : constantes, autoloader, `Plugin` et `Plugin_Updater`. |
 | `autoload.php` | Autoload minimal pour l’espace de noms `AdnA11yChecker`. |
-| `includes/class-plugin.php` | Singleton : textdomain `adn-a11y-checker`, nœud de la barre d’admin, enqueue des scripts. |
+| `includes/class-plugin.php` | Singleton : textdomain `a11y_ux_checker`, accès réservé aux administrateurs, barre d’admin, enqueue des scripts. |
 | `includes/class-plugin-updater.php` | Mises à jour via **Plugin Update Checker** (même bibliothèque que `wp-core`), dépôt **GitHub**. |
 | `includes/plugin-update-checker.php` | Bootstrap PUC (`ADN\PluginUpdateChecker\v5`). |
 | `includes/plugin-update-checker/` | Sources PUC (v5p0). |
@@ -38,8 +38,8 @@ Pour tester la **fermeture d’une modale au clavier** : ouvrez d’abord une mo
 ### Intégration WordPress (PHP)
 
 - Lien **« Analyse a11y & UX »** dans la barre d’administration (`#wpadminbar`, id du nœud : `adn-a11y-audit`).
-- Chargement conditionnel des scripts pour les utilisateurs connectés (front et admin).
-- Textdomain **`adn-a11y-checker`** pour les chaînes traduisibles.
+- Chargement conditionnel des scripts pour les **administrateurs** (front et admin).
+- Textdomain **`a11y_ux_checker`** pour les chaînes traduisibles.
 
 ### Mises à jour depuis GitHub (comme wp-core)
 
@@ -47,13 +47,14 @@ Le plugin embarque **Plugin Update Checker** (PUC, espace de noms `ADN\PluginUpd
 
 1. **En-tête du plugin** : champ `GitHub URI` pointant vers le dépôt, par ex. `https://github.com/ORGANISATION/adn-a11y-ux-checker` (déjà présent comme modèle dans `adn-a11y-checker.php`).
 2. **Surcharge optionnelle** dans `wp-config.php` : `define( 'ADN_A11Y_CHECKER_GITHUB_REPO', 'https://github.com/ORG/REPO' );`
-3. **Dépôt privé** : `define( 'ADN_A11Y_CHECKER_GITHUB_TOKEN', 'ghp_…' );` (jeton avec au minimum lecture du dépôt / releases).
-4. **Désactiver** les mises à jour GitHub : `define( 'ADN_A11Y_CHECKER_GITHUB_REPO', '' );` (chaîne vide).
+3. **Désactiver** les mises à jour GitHub : `define( 'ADN_A11Y_CHECKER_GITHUB_REPO', '' );` (chaîne vide).
+
+Pour un **dépôt privé**, configurez l’authentification GitHub via le hook `adn_a11y_checker_update_checker_ready` et l’API PUC (`setAuthentication`), plutôt qu’une constante dans le dépôt du plugin.
 
 Le slug utilisé côté WordPress est le **nom du dossier** du plugin (`adn-a11y-ux-checker`). Les ZIP de release GitHub doivent décompresser vers un répertoire compatible (voir la doc PUC / structure des releases).
 
-**Hook** : `adn_a11y_checker_update_checker_ready` reçoit l’instance PUC pour appels avancés (`setBranch`, etc.).
-**Filtre** : `adn_a11y_checker_github_repository_url` pour remplacer l’URL du dépôt.
+**Hook** : `adn_a11y_checker_update_checker_ready` reçoit l’instance PUC pour appels avancés (`setBranch`, `setAuthentication`, etc.).
+**Filtres** : `adn_a11y_checker_github_repository_url` (URL du dépôt) ; `a11y_ux_checker_user_can_run_audit` (booléen — qui peut voir le lien et charger les scripts d’audit).
 
 ### Audit de structure (`a11yStructureAudit`)
 

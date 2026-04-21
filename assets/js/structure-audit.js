@@ -72,6 +72,10 @@
 		return this.each(function () {
 
 			var $root = $(this);
+			var l = (window.a11yUxChecker && window.a11yUxChecker.structure) || {};
+			var fmt = window.a11yUxSprintf || function (f) {
+				return f;
+			};
 
 			// =========================================================
 			// DOCUMENT & LANGUAGE
@@ -79,20 +83,20 @@
 			if (settings.checkDocumentLang) {
 				var lang = document.documentElement.getAttribute('lang');
 				if (!lang || !$.trim(lang)) {
-					push('error', 'Missing or empty lang attribute on document element', $(document.documentElement));
+					push('error', l.missing_document_lang || '', $(document.documentElement));
 				}
 			}
 
 			if (settings.checkDocumentTitle) {
 				var docTitle = typeof document.title === 'string' ? $.trim(document.title) : '';
 				if (!docTitle) {
-					push('warning', 'Document title is empty or missing');
+					push('warning', l.empty_document_title || '');
 				}
 			}
 
 			if (settings.checkMetaViewport && typeof document.head !== 'undefined') {
 				if (!$('head meta[name="viewport"]', document).length) {
-					push('info', 'No meta viewport in document head (check responsive behaviour)');
+					push('info', l.no_meta_viewport || '');
 				}
 			}
 
@@ -102,27 +106,33 @@
 			var $main = $root.find('main');
 
 			if ($main.length !== 1) {
-				push('error', 'Expected exactly 1 <main> element', $main);
+				push('error', l.expected_one_main || '', $main);
 			}
 
 			if (settings.checkMissingLandmarks) {
-				if ($root.find('nav').length === 0) push('warning', 'Missing <nav> landmark');
-				if ($root.find('header').length === 0) push('warning', 'Missing <header> landmark');
-				if ($root.find('footer').length === 0) push('warning', 'Missing <footer> landmark');
+				if ($root.find('nav').length === 0) {
+					push('warning', l.missing_nav_landmark || '');
+				}
+				if ($root.find('header').length === 0) {
+					push('warning', l.missing_header_landmark || '');
+				}
+				if ($root.find('footer').length === 0) {
+					push('warning', l.missing_footer_landmark || '');
+				}
 			}
 
 			if ($root.find('header').length > 1) {
-				push('warning', 'Multiple <header> landmarks detected', $root.find('header'));
+				push('warning', l.multiple_header_landmarks || '', $root.find('header'));
 			}
 
 			if ($root.find('footer').length > 1) {
-				push('warning', 'Multiple <footer> landmarks detected', $root.find('footer'));
+				push('warning', l.multiple_footer_landmarks || '', $root.find('footer'));
 			}
 
 			$root.find('nav').each(function () {
 				var $el = $(this);
 				if (!($el.attr('aria-label') || $el.attr('aria-labelledby'))) {
-					push('warning', 'Navigation landmark missing accessible name', $el);
+					push('warning', l.nav_missing_name || '', $el);
 				}
 			});
 
@@ -133,11 +143,11 @@
 			var lastLevel = 0;
 
 			if (settings.checkMultipleH1 && $root.find('h1').length > 1) {
-				push('warning', 'Multiple <h1> elements detected', $root.find('h1'));
+				push('warning', l.multiple_h1 || '', $root.find('h1'));
 			}
 
 			if ($root.find('h1').length === 0) {
-				push('warning', 'Missing <h1> element');
+				push('warning', l.missing_h1 || '');
 			}
 
 			headings.each(function () {
@@ -146,12 +156,12 @@
 				var level = parseInt(this.tagName.substring(1), 10);
 
 				if (!text($el)) {
-					push('error', 'Empty heading detected', $el);
+					push('error', l.empty_heading || '', $el);
 				}
 
 				if (settings.checkHeadingOrder && lastLevel && level > lastLevel + 1) {
 					push('warning',
-						'Heading level skipped (H' + lastLevel + ' → H' + level + ')',
+						fmt(l.heading_level_skipped || '', lastLevel, level),
 						$el
 					);
 				}
@@ -172,11 +182,11 @@
 					$el.find('h1,h2,h3,h4,h5').length;
 
 				if (!hasLabel) {
-					push('warning', 'Section missing accessible name', $el);
+					push('warning', l.section_missing_name || '', $el);
 				}
 
 				if (!text($el)) {
-					push('warning', 'Empty section detected', $el);
+					push('warning', l.empty_section || '', $el);
 				}
 			});
 
@@ -188,7 +198,7 @@
 				var $el = $(this);
 
 				if ($el.children('li').length === 0) {
-					push('error', 'List has no <li> elements', $el);
+					push('error', l.list_no_li || '', $el);
 				}
 			});
 
@@ -205,14 +215,14 @@
 					var val = getAttr($el, attr);
 
 					if (!val) {
-						push('error', attr + ' is empty', $el);
+						push('error', fmt(l.aria_attr_empty || '', attr), $el);
 						return;
 					}
 
 					val.split(/\s+/).forEach(function (id) {
 						if (id && !document.getElementById(id)) {
 							push('error',
-								attr + ' references missing ID: ' + id,
+								fmt(l.aria_attr_missing_id || '', attr, id),
 								$el
 							);
 						}
@@ -228,12 +238,12 @@
 				var visibleText = text($el);
 
 				if (!label) {
-					push('error', 'Empty aria-label', $el);
+					push('error', l.empty_aria_label || '', $el);
 				}
 
 				if (label && visibleText && label.toLowerCase() === visibleText.toLowerCase()) {
 					push('info',
-						'Redundant aria-label duplicates visible text',
+						l.redundant_aria_label || '',
 						$el
 					);
 				}
@@ -245,15 +255,15 @@
 				var role = getAttr($el, 'role');
 
 				if (!role) {
-					push('error', 'Empty role attribute detected', $el);
+					push('error', l.empty_role || '', $el);
 				}
 
 				if (role === 'button' && $el.is('button')) {
-					push('info', 'Redundant role="button" on native button', $el);
+					push('info', l.redundant_role_button || '', $el);
 				}
 
 				if (role === 'link' && $el.is('a')) {
-					push('info', 'Redundant role="link" on native anchor', $el);
+					push('info', l.redundant_role_link || '', $el);
 				}
 			});
 
@@ -261,7 +271,7 @@
 			// INTERACTIVE ELEMENTS
 			// =========================================================
 			$root.find('[onclick],[onmouseover],[onmousedown],[onmouseup]').each(function () {
-				push('info', 'Inline event handler detected', $(this));
+				push('info', l.inline_event_handler || '', $(this));
 			});
 
 			$root.find('[onclick]').each(function () {
@@ -270,7 +280,7 @@
 
 				if (!isNativeInteractive($el)) {
 					push('warning',
-						'Non-semantic clickable element detected',
+						l.non_semantic_clickable || '',
 						$el
 					);
 				}
@@ -286,10 +296,16 @@
 				var $el = $(this);
 				var href = $el.attr('href');
 
-				if (!href || href.indexOf('#') === 0) return;
-				if ($el.closest('nav').length) return;
+				if (!href || href.indexOf('#') === 0) {
+					return;
+				}
+				if ($el.closest('nav').length) {
+					return;
+				}
 
-				if (!linkMap[href]) linkMap[href] = [];
+				if (!linkMap[href]) {
+					linkMap[href] = [];
+				}
 				linkMap[href].push($el);
 			});
 
@@ -297,7 +313,7 @@
 
 				if (linkMap[href].length > 1) {
 					push('info',
-						'Multiple links to same page: ' + href,
+						fmt(l.multiple_links_same_page || '', href),
 						$(linkMap[href])
 					);
 				}
@@ -310,7 +326,7 @@
 
 				if (hasDirectTextNode(this)) {
 					push('info',
-						'Block contains direct text node (consider semantic wrapper)',
+						l.block_direct_text_node || '',
 						$(this)
 					);
 				}
@@ -325,7 +341,7 @@
 
 				if ($a.children().length && $a.closest('div,section,article').length) {
 					push('warning',
-						'Linked container detected',
+						l.linked_container || '',
 						$a
 					);
 				}
@@ -339,13 +355,15 @@
 			var idMap = {};
 			$root.find('[id]').each(function () {
 				var id = this.id;
-				if (!id) return;
+				if (!id) {
+					return;
+				}
 				idMap[id] = (idMap[id] || 0) + 1;
 			});
 
 			Object.keys(idMap).forEach(function (id) {
 				if (idMap[id] > 1) {
-					push('error', 'Duplicate ID detected: #' + id, $('#' + id));
+					push('error', fmt(l.duplicate_id || '', id), $('#' + id));
 				}
 			});
 
@@ -357,7 +375,7 @@
 
 				if (ti > 0) {
 					push('warning',
-						'Positive tabindex breaks natural focus order',
+						l.positive_tabindex || '',
 						$el,
 						{ tabindex: ti }
 					);
@@ -371,7 +389,7 @@
 
 				if ($el.find('a,button,input,select,textarea,[tabindex]').length) {
 					push('error',
-						'Focusable elements inside aria-hidden container',
+						l.focusable_inside_aria_hidden || '',
 						$el
 					);
 				}
@@ -384,7 +402,7 @@
 
 				if (!text($el) && !$el.attr('aria-label') && !$el.attr('aria-labelledby')) {
 					push('warning',
-						'Interactive element missing accessible name',
+						l.interactive_missing_name || '',
 						$el
 					);
 				}
@@ -397,7 +415,7 @@
 				$root.find('img').each(function () {
 					var el = this;
 					if (!el.hasAttribute('alt')) {
-						push('error', 'img element missing alt attribute', $(el));
+						push('error', l.img_missing_alt || '', $(el));
 					}
 				});
 			}
@@ -421,7 +439,7 @@
 						$svg.attr('aria-labelledby');
 					if (!hasName) {
 						push('warning',
-							'SVG may be missing an accessible name (title, aria-label, or aria-labelledby)',
+							l.svg_missing_accessible_name || '',
 							$svg
 						);
 					}
@@ -435,10 +453,10 @@
 				$root.find('table').each(function () {
 					var $t = $(this);
 					if (!$t.find('th').length) {
-						push('warning', 'Table has no th elements', $t);
+						push('warning', l.table_no_th || '', $t);
 					}
 					if ($t.find('td').length > 4 && !$t.find('caption').length) {
-						push('info', 'Large table without caption — consider adding a caption', $t);
+						push('info', l.large_table_no_caption || '', $t);
 					}
 				});
 			}
@@ -459,11 +477,11 @@
 					var target = id ? document.getElementById(id) : null;
 					if (!target) {
 						push('warning',
-							'Skip/bypass link points to a missing fragment target: ' + href,
+							fmt(l.skip_link_missing_target || '', href),
 							$a
 						);
 					} else {
-						push('info', 'Skip/bypass link pattern detected', $a);
+						push('info', l.skip_link_pattern || '', $a);
 					}
 				});
 			}
@@ -477,13 +495,13 @@
 					var hasName = $d.attr('aria-label') || $d.attr('aria-labelledby');
 					if (!hasName) {
 						push('warning',
-							'Dialog or alertdialog missing accessible name (aria-label or aria-labelledby)',
+							l.dialog_missing_name || '',
 							$d
 						);
 					}
 					if (!$d.attr('aria-modal')) {
 						push('info',
-							'Dialog without aria-modal (verify modal behaviour and focus trap)',
+							l.dialog_no_aria_modal || '',
 							$d
 						);
 					}
@@ -504,7 +522,7 @@
 				});
 				if ($bad.length) {
 					push('warning',
-						'Visible focusable control inside [inert] subtree (keyboard/focus conflict risk)',
+						l.focusable_inside_inert || '',
 						$el
 					);
 				}
@@ -515,21 +533,21 @@
 			// =========================================================
 			if (settings.log) {
 
-				console.group('A11Y STRUCTURE AUDIT');
+				console.group(l.console_group_title || '');
 
-				console.group('ERRORS (' + report.error.length + ')');
+				console.group(fmt(l.console_errors || '', report.error.length));
 				console.log(report.error);
 				console.groupEnd();
 
-				console.group('WARNINGS (' + report.warning.length + ')');
+				console.group(fmt(l.console_warnings || '', report.warning.length));
 				console.log(report.warning);
 				console.groupEnd();
 
-				console.group('INFO (' + report.info.length + ')');
+				console.group(fmt(l.console_info || '', report.info.length));
 				console.log(report.info);
 				console.groupEnd();
 
-				console.group('PATTERNS (' + report.pattern.length + ')');
+				console.group(fmt(l.console_patterns || '', report.pattern.length));
 				console.log(report.pattern);
 				console.groupEnd();
 

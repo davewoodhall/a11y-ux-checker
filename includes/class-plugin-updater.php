@@ -83,13 +83,6 @@ class Plugin_Updater {
 			'puc_adn_a11y_' . str_replace('-', '_', $slug)
 		);
 
-		if (defined('ADN_A11Y_CHECKER_GITHUB_TOKEN')) {
-			$token = constant('ADN_A11Y_CHECKER_GITHUB_TOKEN');
-			if (is_string($token) && $token !== '') {
-				$checker->setAuthentication($token);
-			}
-		}
-
 		/**
 		 * Fires after the GitHub update checker is ready (branch, auth, etc. can be adjusted).
 		 *

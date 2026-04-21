@@ -17,13 +17,13 @@
 
 		var current = thresholds[settings.level] || thresholds.AA;
 
-		var report = [];
-
 		// -------------------------
 		// CORE COLOR UTILS
 		// -------------------------
 		function getRGB(color) {
-			if (!color) return [0, 0, 0];
+			if (!color) {
+				return [0, 0, 0];
+			}
 			var match = color.match(/\d+(\.\d+)?/g);
 			return match ? match.slice(0, 3).map(Number) : [0, 0, 0];
 		}
@@ -43,7 +43,9 @@
 		}
 
 		function isTransparent(bg) {
-			if (!bg || bg === 'transparent') return true;
+			if (!bg || bg === 'transparent') {
+				return true;
+			}
 
 			if (bg.indexOf('rgba') === 0) {
 				var parts = bg.match(/\d+(\.\d+)?/g);
@@ -61,7 +63,9 @@
 
 				var bg = window.getComputedStyle(el).backgroundColor;
 
-				if (!isTransparent(bg)) return bg;
+				if (!isTransparent(bg)) {
+					return bg;
+				}
 
 				el = el.parentElement;
 			}
@@ -70,11 +74,17 @@
 		}
 
 		function isIgnored($el) {
-			if (!settings.ignore) return false;
+			if (!settings.ignore) {
+				return false;
+			}
 
-			if ($el.is(settings.ignore)) return true;
+			if ($el.is(settings.ignore)) {
+				return true;
+			}
 
-			if (settings.ignoreDescendants && $el.closest(settings.ignore).length) return true;
+			if (settings.ignoreDescendants && $el.closest(settings.ignore).length) {
+				return true;
+			}
 
 			return false;
 		}
@@ -86,10 +96,18 @@
 
 			var state = [];
 
-			if (el.matches(':hover')) state.push('hover');
-			if (el.matches(':focus')) state.push('focus');
-			if (el.matches(':active')) state.push('active');
-			if ($el.is(':disabled')) state.push('disabled');
+			if (el.matches(':hover')) {
+				state.push('hover');
+			}
+			if (el.matches(':focus')) {
+				state.push('focus');
+			}
+			if (el.matches(':active')) {
+				state.push('active');
+			}
+			if ($el.is(':disabled')) {
+				state.push('disabled');
+			}
 
 			return state;
 		}
@@ -104,17 +122,27 @@
 			);
 		}
 
+		var report = [];
+
 		return this.each(function () {
 
 			var $root = $(this);
+			var l = (window.a11yUxChecker && window.a11yUxChecker.contrast) || {};
+			var fmt = window.a11yUxSprintf || function (f) {
+				return f;
+			};
 
 			$root.find('*').each(function () {
 
 				var el = this;
 				var $el = $(el);
 
-				if (!$el.is(':visible')) return;
-				if (isIgnored($el)) return;
+				if (!$el.is(':visible')) {
+					return;
+				}
+				if (isIgnored($el)) {
+					return;
+				}
 
 				var style = window.getComputedStyle(el);
 
@@ -122,7 +150,9 @@
 				var bg = getBackground(el);
 
 				// skip invisible text
-				if (parseFloat(style.opacity) === 0 || color === 'transparent') return;
+				if (parseFloat(style.opacity) === 0 || color === 'transparent') {
+					return;
+				}
 
 				var fgRGB = getRGB(color);
 				var bgRGB = getRGB(bg);
@@ -216,12 +246,12 @@
 
 						note:
 							focusVisibilityRisk
-								? 'Focus state lacks visible contrast (outline suppressed or insufficient)'
+								? (l.note_focus_visibility || '')
 								: isTransparent(bg)
-									? 'Transparency chain affects effective contrast (computed background differs from visual perception)'
+									? (l.note_transparency || '')
 									: isIconOnly
-										? 'Icon-only element may require non-text contrast validation'
-										: 'Standard contrast failure'
+										? (l.note_icon_only || '')
+										: (l.note_standard_failure || '')
 					});
 				}
 			});
@@ -231,35 +261,43 @@
 			// -------------------------
 			if (settings.log) {
 
-				console.group('A11Y CONTRAST REPORT (' + settings.level + ')');
+				console.group(fmt(l.console_group_title || '', settings.level));
 
-				console.log('Failures:', report.length);
+				console.log(fmt(l.failures_count || '', report.length));
 
 				// grouped insights (added UX/contrast categories)
 				var groups = {
-					textContrast: report.filter(r => r.type === 'text-contrast'),
-					iconOrNonText: report.filter(r => r.details.isIconOnly),
-					focusIssues: report.filter(r => r.details.focusVisibilityRisk),
-					transparencyIssues: report.filter(r => r.details.backgroundTransparencyRisk)
+					textContrast: report.filter(function (r) {
+						return r.type === 'text-contrast';
+					}),
+					iconOrNonText: report.filter(function (r) {
+						return r.details.isIconOnly;
+					}),
+					focusIssues: report.filter(function (r) {
+						return r.details.focusVisibilityRisk;
+					}),
+					transparencyIssues: report.filter(function (r) {
+						return r.details.backgroundTransparencyRisk;
+					})
 				};
 
-				console.group('TEXT CONTRAST');
+				console.group(l.group_text_contrast || '');
 				console.log(groups.textContrast);
 				console.groupEnd();
 
-				console.group('ICON / NON-TEXT RISK');
+				console.group(l.group_icon_non_text || '');
 				console.log(groups.iconOrNonText);
 				console.groupEnd();
 
-				console.group('FOCUS VISIBILITY ISSUES');
+				console.group(l.group_focus_visibility || '');
 				console.log(groups.focusIssues);
 				console.groupEnd();
 
-				console.group('TRANSPARENCY / LAYERING ISSUES');
+				console.group(l.group_transparency || '');
 				console.log(groups.transparencyIssues);
 				console.groupEnd();
 
-				console.group('FULL REPORT');
+				console.group(l.group_full_report || '');
 				console.log(report);
 				console.groupEnd();
 

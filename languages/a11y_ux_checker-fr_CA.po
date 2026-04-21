@@ -1,0 +1,352 @@
+# French (Canada) translation for A11Y & UX Checker.
+# Copyright (C) ADN Communication
+msgid ""
+msgstr ""
+"Project-Id-Version: A11Y UX Checker 0.0.1\n"
+"Report-Msgid-Bugs-To: https://adn.communication\n"
+"POT-Creation-Date: 2026-04-20 12:00+0000\n"
+"PO-Revision-Date: 2026-04-20 12:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: French (Canada)\n"
+"Language: fr_CA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Cursor\n"
+
+msgid "A11y & UX audit"
+msgstr "Analyse a11y et UX"
+
+msgid "Run the accessibility and UX audit (results appear in the browser console)."
+msgstr "Lancer l’analyse d’accessibilité et d’UX (résultats dans la console du navigateur)."
+
+msgid "Missing or empty lang attribute on the document element"
+msgstr "Attribut lang absent ou vide sur l’élément racine du document"
+
+msgid "Document title is empty or missing"
+msgstr "Le titre du document est vide ou absent"
+
+msgid "No meta viewport in the document head (check responsive behaviour)"
+msgstr "Aucune balise meta viewport dans l’en-tête du document (vérifiez le comportement adaptatif)"
+
+msgid "Expected exactly one <main> element"
+msgstr "Un seul élément <main> est attendu"
+
+msgid "Missing <nav> landmark"
+msgstr "Repère <nav> absent"
+
+msgid "Missing <header> landmark"
+msgstr "Repère <header> absent"
+
+msgid "Missing <footer> landmark"
+msgstr "Repère <footer> absent"
+
+msgid "Multiple <header> landmarks detected"
+msgstr "Plusieurs repères <header> détectés"
+
+msgid "Multiple <footer> landmarks detected"
+msgstr "Plusieurs repères <footer> détectés"
+
+msgid "Navigation landmark missing an accessible name"
+msgstr "Repère de navigation sans nom accessible"
+
+msgid "Multiple <h1> elements detected"
+msgstr "Plusieurs éléments <h1> détectés"
+
+msgid "Missing <h1> element"
+msgstr "Élément <h1> absent"
+
+msgid "Empty heading detected"
+msgstr "Titre vide détecté"
+
+msgid "Heading level skipped (H%1$d → H%2$d)"
+msgstr "Saut de niveau de titre (H%1$d → H%2$d)"
+
+msgid "Section missing an accessible name"
+msgstr "Section sans nom accessible"
+
+msgid "Empty section detected"
+msgstr "Section vide détectée"
+
+msgid "List has no <li> elements"
+msgstr "Liste sans éléments <li>"
+
+msgid "%s is empty"
+msgstr "%s est vide"
+
+msgid "%1$s references a missing ID: %2$s"
+msgstr "%1$s référence un ID absent : %2$s"
+
+msgid "Empty aria-label"
+msgstr "aria-label vide"
+
+msgid "Redundant aria-label duplicates visible text"
+msgstr "aria-label redondant qui duplique le texte visible"
+
+msgid "Empty role attribute detected"
+msgstr "Attribut role vide détecté"
+
+msgid "Redundant role=\"button\" on a native button"
+msgstr "role=\"button\" redondant sur un bouton natif"
+
+msgid "Redundant role=\"link\" on a native anchor"
+msgstr "role=\"link\" redondant sur une ancre native"
+
+msgid "Inline event handler detected"
+msgstr "Gestionnaire d’événements inline détecté"
+
+msgid "Non-semantic clickable element detected"
+msgstr "Élément cliquable non sémantique détecté"
+
+msgid "Multiple links to the same page: %s"
+msgstr "Plusieurs liens vers la même page : %s"
+
+msgid "Block contains a direct text node (consider a semantic wrapper)"
+msgstr "Le bloc contient un nœud texte direct (envisagez un conteneur sémantique)"
+
+msgid "Linked container detected"
+msgstr "Conteneur entièrement lié détecté"
+
+msgid "Duplicate ID detected: #%s"
+msgstr "ID dupliqué détecté : #%s"
+
+msgid "Positive tabindex disrupts natural focus order"
+msgstr "Un tabindex positif perturbe l’ordre naturel du focus"
+
+msgid "Focusable elements inside an aria-hidden container"
+msgstr "Éléments focalisables dans un conteneur aria-hidden"
+
+msgid "Interactive element missing an accessible name"
+msgstr "Élément interactif sans nom accessible"
+
+msgid "img element missing an alt attribute"
+msgstr "Élément img sans attribut alt"
+
+msgid "SVG may be missing an accessible name (title, aria-label, or aria-labelledby)"
+msgstr "Le SVG peut manquer de nom accessible (title, aria-label ou aria-labelledby)"
+
+msgid "Table has no th elements"
+msgstr "Table sans éléments th"
+
+msgid "Large table without a caption — consider adding a caption"
+msgstr "Grande table sans légende — envisagez d’ajouter une légende"
+
+msgid "Skip link points to a missing fragment target: %s"
+msgstr "Le lien d’évitement pointe vers une ancre absente : %s"
+
+msgid "Skip link pattern detected"
+msgstr "Motif de lien d’évitement détecté"
+
+msgid "Dialog or alertdialog missing an accessible name (aria-label or aria-labelledby)"
+msgstr "Dialogue ou alertdialog sans nom accessible (aria-label ou aria-labelledby)"
+
+msgid "Dialog without aria-modal (verify modal behaviour and focus trap)"
+msgstr "Dialogue sans aria-modal (vérifiez le comportement modal et le piège à focus)"
+
+msgid "Visible focusable control inside an [inert] subtree (keyboard/focus conflict risk)"
+msgstr "Contrôle focalisable visible dans un sous-arbre [inert] (risque de conflit clavier/focus)"
+
+msgid "A11y structure audit"
+msgstr "Audit de structure d’accessibilité"
+
+msgid "Errors (%d)"
+msgstr "Erreurs (%d)"
+
+msgid "Warnings (%d)"
+msgstr "Avertissements (%d)"
+
+msgid "Info (%d)"
+msgstr "Infos (%d)"
+
+msgid "Patterns (%d)"
+msgstr "Motifs (%d)"
+
+msgid "Focus state lacks sufficient visible contrast (outline suppressed or insufficient)"
+msgstr "L’état focus manque de contraste visible suffisant (contour masqué ou insuffisant)"
+
+msgid "Transparency chain affects effective contrast (computed background may differ from perception)"
+msgstr "La chaîne de transparence affecte le contraste effectif (l’arrière-plan calculé peut différer de la perception)"
+
+msgid "Icon-only element may require non-text contrast validation"
+msgstr "Élément pictographique uniquement — validez le contraste non textuel"
+
+msgid "Standard contrast failure"
+msgstr "Échec de contraste standard"
+
+msgid "A11y contrast report (%s)"
+msgstr "Rapport de contraste d’accessibilité (%s)"
+
+msgid "Failures: %d"
+msgstr "Échecs : %d"
+
+msgid "Text contrast"
+msgstr "Contraste du texte"
+
+msgid "Icon / non-text risk"
+msgstr "Risque pictogramme / non textuel"
+
+msgid "Focus visibility issues"
+msgstr "Problèmes de visibilité du focus"
+
+msgid "Transparency / layering issues"
+msgstr "Transparence / superposition"
+
+msgid "Full report"
+msgstr "Rapport complet"
+
+msgid "A11y forms audit"
+msgstr "Audit des formulaires (accessibilité)"
+
+msgid "Missing labels"
+msgstr "Étiquettes absentes"
+
+msgid "Missing IDs"
+msgstr "ID absents"
+
+msgid "Missing names"
+msgstr "Attributs name absents"
+
+msgid "Missing ID and name"
+msgstr "ID et name absents"
+
+msgid "Hidden labels"
+msgstr "Étiquettes masquées"
+
+msgid "Input type mismatch"
+msgstr "Type d’entrée incohérent"
+
+msgid "Placeholder used as label"
+msgstr "Placeholder utilisé comme étiquette"
+
+msgid "Autocomplete missing"
+msgstr "Autocomplete absent"
+
+msgid "Required indicator mismatch"
+msgstr "Indicateur obligatoire incohérent"
+
+msgid "Required field overload"
+msgstr "Trop de champs obligatoires"
+
+msgid "aria-invalid missing"
+msgstr "aria-invalid absent"
+
+msgid "aria-required mismatch"
+msgstr "Incohérence aria-required"
+
+msgid "Broken aria-describedby"
+msgstr "aria-describedby rompu"
+
+msgid "Error live region missing"
+msgstr "Région live d’erreur absente"
+
+msgid "Fieldset missing"
+msgstr "Fieldset absent"
+
+msgid "Legend missing"
+msgstr "Legend absent"
+
+msgid "Empty error containers"
+msgstr "Conteneurs d’erreur vides"
+
+msgid "Help text not linked"
+msgstr "Texte d’aide non relié"
+
+msgid "Ambiguous inputs"
+msgstr "Champs ambigus"
+
+msgid "Submit button ambiguity"
+msgstr "Ambiguïté du bouton d’envoi"
+
+msgid "Multi-step clarity issues"
+msgstr "Manque de clarté multi-étapes"
+
+msgid "Loading state missing"
+msgstr "État de chargement absent"
+
+msgid "Focusable hidden fields"
+msgstr "Champs masqués mais focalisables"
+
+msgid "Tab order issues"
+msgstr "Problèmes d’ordre de tabulation"
+
+msgid "Focus flow issues"
+msgstr "Problèmes de flux du focus"
+
+msgid "Submit without focus management"
+msgstr "Envoi sans gestion du focus"
+
+msgid "Mutation state issues"
+msgstr "Problèmes d’état après mutation"
+
+msgid "Correct"
+msgstr "Correct"
+
+msgid "Clickable non-semantic element (missing role or native element)"
+msgstr "Élément cliquable non sémantique (role ou élément natif absent)"
+
+msgid "Nested interactive elements detected (click conflict risk)"
+msgstr "Éléments interactifs imbriqués détectés (risque de conflit de clic)"
+
+msgid "Navigation has no detectable top-level items"
+msgstr "Navigation sans entrées de premier niveau détectables"
+
+msgid "High top-level navigation density (%d items)"
+msgstr "Densité élevée de navigation de premier niveau (%d entrées)"
+
+msgid "Excessive top-level navigation complexity (cognitive overload risk)"
+msgstr "Complexité excessive de la navigation de premier niveau (risque de surcharge cognitive)"
+
+msgid "Navigation depth too deep (%d levels)"
+msgstr "Profondeur de navigation excessive (%d niveaux)"
+
+msgid "High CTA density in container (%d elements)"
+msgstr "Densité élevée d’appels à l’action dans le conteneur (%d éléments)"
+
+msgid "Excessive interactive elements in section (%d)"
+msgstr "Trop d’éléments interactifs dans la section (%d)"
+
+msgid "Small click target (%1$dx%2$d)"
+msgstr "Cible de clic petite (%1$d×%2$d)"
+
+msgid "Repeated CTA label: \"%1$s\" (used %2$d times)"
+msgstr "Libellé d’appel à l’action répété : « %1$s » (%2$d fois)"
+
+msgid "Non-interactive element styled as a button (dead UI risk)"
+msgstr "Élément non interactif stylé comme un bouton (risque d’interface morte)"
+
+msgid "High link density with low content (clutter risk)"
+msgstr "Fort taux de liens avec peu de texte (risque d’encombrement)"
+
+msgid "Too many interactive elements in the initial viewport (%d)"
+msgstr "Trop d’éléments interactifs dans la fenêtre initiale (%d)"
+
+msgid "CTA-heavy section without clear hierarchy (missing heading structure)"
+msgstr "Section très chargée en appels à l’action sans hiérarchie claire (titres absents)"
+
+msgid "Link with target=\"_blank\" should include rel=\"noopener\" (and often noreferrer)"
+msgstr "Un lien avec target=\"_blank\" doit inclure rel=\"noopener\" (et souvent noreferrer)"
+
+msgid "Ambiguous or generic link text: \"%1$s\""
+msgstr "Texte de lien ambigu ou générique : « %1$s »"
+
+msgid "UX audit"
+msgstr "Audit UX"
+
+msgid "click here|read more|more\\b|here\\b|learn more|details|link|en savoir plus|cliquez ici|ici\\b|suite\\b"
+msgstr "cliquez ici|en savoir plus|more\\b|here\\b|learn more|détails|lien|read more|ici\\b|suite\\b|click here"
+
+msgid "Modal × Escape (keyboard test)"
+msgstr "Modale × Échap (test clavier)"
+
+msgid "No visible modal or dialog at the time of the test. Open a modal, then run the audit again to verify the Escape key."
+msgstr "Aucune modale ni boîte de dialogue visible au moment du test. Ouvrez une modale, puis relancez l’analyse pour vérifier la touche Échap."
+
+msgid "Synthetic Escape keyboard events are being sent: open modals may close."
+msgstr "Des événements clavier Échap synthétiques sont envoyés : les modales ouvertes peuvent se fermer."
+
+msgid "Likely behaviour: the modal no longer appears visible after Escape (or equivalent)."
+msgstr "Comportement plausible : la modale ne semble plus visible après Échap (ou équivalent)."
+
+msgid "Review: the modal is still visible after Escape — missing shortcut, different listener (keyup), or focus trap."
+msgstr "À vérifier : la modale est encore visible après Échap — raccourci absent, autre écouteur (keyup), ou piège au focus."

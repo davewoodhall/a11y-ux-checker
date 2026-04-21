@@ -148,22 +148,18 @@
 	 * @return {void}
 	 */
 	function runModalEscapeProbe() {
+		var m = (window.a11yUxChecker && window.a11yUxChecker.modal) || {};
 		var candidates = collectVisibleModalCandidates();
 
-		console.group('MODAL × ÉCHAP (test clavier)');
+		console.group(m.console_group_title || '');
 
 		if (!candidates.length) {
-			console.info(
-				'Aucune modale ou boîte de dialogue visible au moment du test. ' +
-				'Ouvrez une modale puis relancez l’analyse pour vérifier la touche Échap.'
-			);
+			console.info(m.no_visible_modal || '');
 			console.groupEnd();
 			return;
 		}
 
-		console.warn(
-			'Des événements clavier Escape synthétiques sont envoyés : les modales ouvertes peuvent se fermer.'
-		);
+		console.warn(m.synthetic_escape_warning || '');
 
 		var index = 0;
 		var delayMs = 280;
@@ -188,12 +184,12 @@
 			window.setTimeout(function () {
 				if (isModalDismissed(el)) {
 					console.log(
-						'Comportement plausible : la modale ne semble plus visible après Escape (ou équivalent).',
+						m.modal_dismissed_ok || '',
 						el
 					);
 				} else {
 					console.warn(
-						'À vérifier : la modale est encore visible après Escape — raccourci absent, listener différent (keyup), ou piège au focus.',
+						m.modal_still_visible || '',
 						el
 					);
 				}

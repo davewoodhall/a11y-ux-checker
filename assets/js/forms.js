@@ -62,14 +62,22 @@
 		};
 
 		function isIgnored($el) {
-			if (!settings.ignore) return false;
-			if ($el.is(settings.ignore)) return true;
-			if (settings.ignoreDescendants && $el.closest(settings.ignore).length) return true;
+			if (!settings.ignore) {
+				return false;
+			}
+			if ($el.is(settings.ignore)) {
+				return true;
+			}
+			if (settings.ignoreDescendants && $el.closest(settings.ignore).length) {
+				return true;
+			}
 			return false;
 		}
 
 		function labelIsHidden($label) {
-			if (!$label || !$label.length) return false;
+			if (!$label || !$label.length) {
+				return false;
+			}
 
 			var el = $label[0];
 			var style = window.getComputedStyle(el);
@@ -95,8 +103,12 @@
 			var type = ($el.attr('type') || '').toLowerCase();
 			var name = ($el.attr('name') || '').toLowerCase();
 
-			if (name.includes('email') && type !== 'email') return true;
-			if (name.includes('tel') && type !== 'tel') return true;
+			if (name.includes('email') && type !== 'email') {
+				return true;
+			}
+			if (name.includes('tel') && type !== 'tel') {
+				return true;
+			}
 
 			return false;
 		}
@@ -105,6 +117,8 @@
 
 			var $root = $(this);
 			var $forms = $root.find('form');
+			var fi = (window.a11yUxChecker && window.a11yUxChecker.forms) || {};
+			var groupLabels = fi.groups || {};
 
 			// -------------------------
 			// RUNTIME TRACKING (focus / submit / mutation)
@@ -121,7 +135,9 @@
 
 					// check if focus was moved to errors (heuristic)
 					setTimeout(function () {
-						if (!document.activeElement) return;
+						if (!document.activeElement) {
+							return;
+						}
 						var active = document.activeElement;
 
 						if ($(active).closest('form').length) {
@@ -192,7 +208,9 @@
 
 				var $el = $(this);
 
-				if (isIgnored($el)) return;
+				if (isIgnored($el)) {
+					return;
+				}
 
 				var id = $el.attr('id');
 				var name = $el.attr('name');
@@ -204,9 +222,15 @@
 					return;
 				}
 
-				if (!id) report.missingIds.push($el);
-				if (!name) report.missingNames.push($el);
-				if (!$label.length) report.missingLabels.push($el);
+				if (!id) {
+					report.missingIds.push($el);
+				}
+				if (!name) {
+					report.missingNames.push($el);
+				}
+				if (!$label.length) {
+					report.missingLabels.push($el);
+				}
 
 				if ($label.length && labelIsHidden($label)) {
 					report.hiddenLabels.push($el);
@@ -221,7 +245,6 @@
 				}
 
 				if (!$el.attr('autocomplete')) {
-					report.autocompleteMissing = report.autocompleteMissing || [];
 					report.autocompleteMissing.push($el);
 				}
 
@@ -239,8 +262,8 @@
 
 				var describedby = $el.attr('aria-describedby');
 				if (describedby) {
-					describedby.split(/\s+/).forEach(function (id) {
-						if (id && !document.getElementById(id)) {
+					describedby.split(/\s+/).forEach(function (bid) {
+						if (bid && !document.getElementById(bid)) {
 							report.ariaDescribedbyBroken.push($el);
 						}
 					});
@@ -251,7 +274,9 @@
 				}
 
 				if (id && name && $label.length) {
-					if (settings.logCorrect) report.correct.push($el);
+					if (settings.logCorrect) {
+						report.correct.push($el);
+					}
 				}
 			});
 
@@ -293,10 +318,11 @@
 			// -------------------------
 			if (settings.log) {
 
-				console.group('A11Y FORMS FULL AUDIT');
+				console.group(fi.console_group_title || '');
 
 				Object.keys(report).forEach(function (key) {
-					console.group(key + ' (' + report[key].length + ')');
+					var title = groupLabels[key] || key;
+					console.group(title + ' (' + report[key].length + ')');
 					console.log(report[key]);
 					console.groupEnd();
 				});

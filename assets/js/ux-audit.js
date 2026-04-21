@@ -66,6 +66,10 @@
 		return this.each(function () {
 
 			var $root = $(this);
+			var l = (window.a11yUxChecker && window.a11yUxChecker.ux) || {};
+			var fmt = window.a11yUxSprintf || function (f) {
+				return f;
+			};
 
 			// =========================================================
 			// 1. CLICKABILITY AMBIGUITY
@@ -74,11 +78,13 @@
 
 				var $el = $(this);
 
-				if (!isClickable(this, $el)) return;
+				if (!isClickable(this, $el)) {
+					return;
+				}
 
 				if (!$el.is('a,button') && !$el.attr('role')) {
 					push('warning',
-						'Clickable non-semantic element (missing role or native element)',
+						l.clickable_non_semantic || '',
 						$el
 					);
 				}
@@ -93,7 +99,7 @@
 
 				if ($el.find('a,button,[onclick]').length > 0) {
 					push('pattern',
-						'Nested interactive elements detected (click conflict risk)',
+						l.nested_interactive || '',
 						$el
 					);
 				}
@@ -115,21 +121,21 @@
 
 				if (count === 0) {
 					push('warning',
-						'Navigation has no detectable top-level items',
+						l.nav_no_top_items || '',
 						$nav
 					);
 				}
 
 				if (count > settings.maxNavTopLevelItems) {
 					push('warning',
-						'High top-level navigation density (' + count + ' items)',
+						fmt(l.nav_high_density || '', count),
 						$nav
 					);
 				}
 
 				if (count > settings.maxNavTopLevelItems + 3) {
 					push('pattern',
-						'Excessive top-level navigation complexity (cognitive overload risk)',
+						l.nav_excessive_complexity || '',
 						$nav
 					);
 				}
@@ -142,7 +148,7 @@
 
 					if (depth > settings.maxNavDepth) {
 						push('pattern',
-							'Navigation depth too deep (' + depth + ' levels)',
+							fmt(l.nav_depth_too_deep || '', depth),
 							$(this),
 							{ depth: depth }
 						);
@@ -160,7 +166,7 @@
 
 				if (ctas.length > settings.maxCtaPerSection) {
 					push('pattern',
-						'High CTA density in container (' + ctas.length + ' elements)',
+						fmt(l.high_cta_density || '', ctas.length),
 						$el
 					);
 				}
@@ -170,7 +176,7 @@
 				// =====================================================
 				if (ctas.length > settings.maxInteractivePerSection) {
 					push('pattern',
-						'Excessive interactive elements in section (' + ctas.length + ')',
+						fmt(l.excessive_interactive_section || '', ctas.length),
 						$el
 					);
 				}
@@ -184,13 +190,15 @@
 				var $el = $(this);
 				var rect = getRect(this);
 
-				if (!rect.width || !rect.height) return;
+				if (!rect.width || !rect.height) {
+					return;
+				}
 
 				if (rect.width < settings.minClickTargetSize ||
 					rect.height < settings.minClickTargetSize) {
 
 					push('warning',
-						'Small click target (' + Math.round(rect.width) + 'x' + Math.round(rect.height) + ')',
+						fmt(l.small_click_target || '', Math.round(rect.width), Math.round(rect.height)),
 						$el
 					);
 				}
@@ -206,7 +214,9 @@
 				var $el = $(this);
 				var label = text($el) || $el.attr('aria-label');
 
-				if (!label) return;
+				if (!label) {
+					return;
+				}
 
 				labelMap[label] = labelMap[label] || [];
 				labelMap[label].push($el);
@@ -216,7 +226,7 @@
 
 				if (labelMap[label].length > 3) {
 					push('pattern',
-						'Repeated CTA label: "' + label + '" (' + labelMap[label].length + 'x)',
+						fmt(l.repeated_cta_label || '', label, labelMap[label].length),
 						$(labelMap[label])
 					);
 				}
@@ -240,7 +250,7 @@
 
 				if (looksClickable && !isRealInteractive) {
 					push('warning',
-						'Non-interactive element styled as button (dead UI risk)',
+						l.dead_ui_styled_as_button || '',
 						$el
 					);
 				}
@@ -258,7 +268,7 @@
 
 				if (linkCount > 10 && textLength < 300) {
 					push('pattern',
-						'High link density with low content (clutter risk)',
+						l.high_link_density_low_content || '',
 						$el
 					);
 				}
@@ -283,7 +293,7 @@
 
 			if (interactiveInViewport.length > settings.maxCTAsPerViewport) {
 				push('pattern',
-					'Too many interactive elements in initial viewport (' + interactiveInViewport.length + ')',
+					fmt(l.viewport_interaction_overload || '', interactiveInViewport.length),
 					$(interactiveInViewport)
 				);
 			}
@@ -300,7 +310,7 @@
 
 				if (ctas.length > 0 && headings.length === 0) {
 					push('pattern',
-						'CTA-heavy section without clear hierarchy (missing heading structure)',
+						l.cta_section_no_heading || '',
 						$el
 					);
 				}
@@ -314,7 +324,7 @@
 					var rel = ($(this).attr('rel') || '').toLowerCase();
 					if (rel.indexOf('noopener') === -1) {
 						push('warning',
-							'Link with target="_blank" should include rel="noopener" (and often noreferrer)',
+							l.target_blank_rel || '',
 							$(this)
 						);
 					}
@@ -325,9 +335,10 @@
 			// 12. GENERIC / AMBIGUOUS LINK TEXT
 			// =========================================================
 			if (settings.checkGenericLinkText) {
+				var altBody = l.generic_link_regex_body ||
+					'click here|read more|more\\b|here\\b|learn more|details|link|en savoir plus|cliquez ici|ici\\b|suite\\b';
 				var genericRe = new RegExp(
-					'^(click here|read more|more\\b|here\\b|learn more|details|link|'
-						+ 'en savoir plus|cliquez ici|ici\\b|suite\\b)$',
+					'^(' + altBody + ')$',
 					'i'
 				);
 				$root.find('a[href]').each(function () {
@@ -339,7 +350,7 @@
 					t = t.replace(/\s+/g, ' ').trim();
 					if (genericRe.test(t)) {
 						push('pattern',
-							'Ambiguous or generic link text: "' + t + '"',
+							fmt(l.ambiguous_link_text || '', t),
 							$a
 						);
 					}
@@ -351,17 +362,17 @@
 			// =========================================================
 			if (settings.log) {
 
-				console.group('UX AUDIT');
+				console.group(l.console_group_title || '');
 
-				console.group('PATTERNS (' + report.pattern.length + ')');
+				console.group(fmt(l.console_patterns || '', report.pattern.length));
 				console.log(report.pattern);
 				console.groupEnd();
 
-				console.group('WARNINGS (' + report.warning.length + ')');
+				console.group(fmt(l.console_warnings || '', report.warning.length));
 				console.log(report.warning);
 				console.groupEnd();
 
-				console.group('INFO (' + report.info.length + ')');
+				console.group(fmt(l.console_info || '', report.info.length));
 				console.log(report.info);
 				console.groupEnd();
 

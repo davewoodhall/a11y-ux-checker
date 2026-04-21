@@ -22,6 +22,7 @@ spl_autoload_register(
 		$map      = [
 			'Plugin'         => 'class-plugin.php',
 			'Plugin_Updater' => 'class-plugin-updater.php',
+			'Plugin_I18n'    => 'class-plugin-i18n.php',
 		];
 		if (!isset($map[$relative])) {
 			return;
